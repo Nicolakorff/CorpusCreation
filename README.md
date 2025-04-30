@@ -3,7 +3,7 @@
 This project automates the process of extracting articles from a specified website, preprocessing the text content, and performing basic analysis such as generating a word cloud of the most frequent terms. It serves as a practical introduction to web scraping, natural language processing (NLP), and data visualization using Python.
 
 <img width="753" alt="Captura de pantalla 2025-04-30 a las 22 37 44" src="https://github.com/user-attachments/assets/4ac298c6-594b-4eb4-abe1-bbdd21dbae95" />
-![wordcloud](https://github.com/user-attachments/assets/3b0313ff-1a2b-4c4e-9e68-a27bdf9aec70)
+<img width="582" alt="Captura de pantalla 2025-04-30 a las 22 52 03" src="https://github.com/user-attachments/assets/994519f3-70ba-4c99-9da7-32d8a3f25ad7" />
 <img width="1196" alt="Captura de pantalla 2025-04-30 a las 22 37 28" src="https://github.com/user-attachments/assets/8e6ec73b-3510-4a2f-9ea3-8982c78f34f9" />
 <img width="986" alt="Captura de pantalla 2025-04-29 a las 23 13 55" src="https://github.com/user-attachments/assets/345cfc72-410f-4db2-b5f1-1a6666310d2a" />
 
