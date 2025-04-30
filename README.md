@@ -1,6 +1,6 @@
 # Corpus Creator and Analyzer
 
-This project automates the process of extracting articles from a specified website, preprocessing the text content, and performing basic analysis such as generating a word cloud of the most frequent terms. It serves as a practical introduction to web scraping, natural language processing (NLP), and data visualization using Python.
+This project automates the process of extracting articles from a specified website, preprocessing the text content, and performing basic analysis such as generating a word cloud of the most frequent terms, perform sentiment analysis and topic modeling. It serves as a practical introduction to web scraping, natural language processing (NLP), and data visualization using Python.
 
 <img width="753" alt="Captura de pantalla 2025-04-30 a las 22 37 44" src="https://github.com/user-attachments/assets/4ac298c6-594b-4eb4-abe1-bbdd21dbae95" />
 <img width="582" alt="Captura de pantalla 2025-04-30 a las 22 52 03" src="https://github.com/user-attachments/assets/994519f3-70ba-4c99-9da7-32d8a3f25ad7" />
@@ -92,7 +92,7 @@ Extract news articles from the specified URL.
 Preprocess the text content (cleaning, tokenization, stopword removal, lemmatization).
 Analyze the frequency of words in the extracted articles.
 Generate and display a word cloud of the most frequent words.
-(Optionally, if implemented) Perform other analyses like sentiment analysis or topic modeling.
+Perform sentiment analysis and topic modeling.
 
 ## Running the Notebook:
 ```
