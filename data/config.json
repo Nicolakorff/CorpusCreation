@@ -1,0 +1,31 @@
+{
+  "extraccion": {
+    "url_principal": "https://www.scientificamerican.com/",
+    "limite_articulos": 6,
+    "selector_titulo_articulo": "h2",
+    "selector_contenido_articulo": ".article-body"
+  },
+  "preprocesamiento": {
+    "stopwords_excluir": ["example", "another", "scientific", "american"],
+    "cargar_stopwords_desde_archivo": false,
+    "ruta_archivo_stopwords": "data/stopwords_personalizadas.txt"
+  },
+  "analisis": {
+    "nube_palabras": {
+      "num_palabras": 20,
+      "background_color": "black",
+      "colormap": "autumn",
+      "forma_circular": true
+    },
+    "top_n_palabras": {
+      "n": 20
+    },
+    "modelado_temas": {
+      "num_temas": 5,
+      "num_palabras_por_tema": 10
+    }
+  },
+  "rutas": {
+    "archivo_corpus": "data/corpus.json"
+  }
+}
