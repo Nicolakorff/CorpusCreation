@@ -24,7 +24,7 @@ Topic count was chosen by c_v coherence over k = 3…8 (best: **k = 3, c_v = 0.4
 | 2 | australia australian south government day fire people company | Australian domestic news (bushfires, economy) |
 | 3 | afghanistan force day people bin laden government united | Afghanistan war |
 
-Coherence differences between k values are small, so treat the topic count as indicative, not definitive.
+Coherence differences between k values are small, so treat the topic count as indicative, not definitive. The notebook [`notebooks/exploratory_analysis.ipynb`](notebooks/exploratory_analysis.ipynb) repeats the analysis with a wider range (k = 2…10) and slightly different stopwords, where coherence peaks at k = 8 (c_v = 0.45): a different setting, which shows how sensitive the choice is.
 
 ## Features
 
@@ -75,7 +75,7 @@ To scrape instead, set `"source": {"type": "web", "url": "https://…", "article
 │   └── analyzer.py          # statistics, sentiment, entities, LDA, word cloud
 ├── scripts/prepare_lee_corpus.py
 ├── tests/
-├── notebooks/               # original exploratory notebooks (earlier version)
+├── notebooks/exploratory_analysis.ipynb   # executed walkthrough with plots
 └── docs/                    # demo word cloud and topics
 ```
 
