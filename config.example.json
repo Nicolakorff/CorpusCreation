@@ -1,0 +1,6 @@
+{
+  "source": {"type": "dir", "path": "data/lee_demo"},
+  "preprocessing": {"extra_stopwords": ["say", "tell", "year", "new"], "min_doc_tokens": 30},
+  "analysis": {"topics": {"min": 3, "max": 8}},
+  "output_dir": "outputs"
+}

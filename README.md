@@ -1,126 +1,98 @@
-# Corpus Creator and Analyzer
+# CorpusCreation: Text Corpus Builder and Analyzer
 
-This project automates the process of extracting articles from a specified website, preprocessing the text content, and performing basic analysis such as generating a word cloud of the most frequent terms, perform sentiment analysis and topic modeling. It serves as a practical introduction to web scraping, natural language processing (NLP), and data visualization using Python.
+Python pipeline that builds a text corpus (from local `.txt` files or by scraping a website) and analyses it: lemmatization with spaCy, word frequencies, named entities, sentiment, and **LDA topic modelling with the number of topics chosen by coherence (c_v)**. It writes a corpus-quality report, a word cloud and a topic table.
 
-<img width="753" alt="Captura de pantalla 2025-04-30 a las 22 37 44" src="https://github.com/user-attachments/assets/4ac298c6-594b-4eb4-abe1-bbdd21dbae95" />
-<img width="582" alt="Captura de pantalla 2025-04-30 a las 22 52 03" src="https://github.com/user-attachments/assets/994519f3-70ba-4c99-9da7-32d8a3f25ad7" />
-<img width="1196" alt="Captura de pantalla 2025-04-30 a las 22 37 28" src="https://github.com/user-attachments/assets/8e6ec73b-3510-4a2f-9ea3-8982c78f34f9" />
-<img width="986" alt="Captura de pantalla 2025-04-29 a las 23 13 55" src="https://github.com/user-attachments/assets/345cfc72-410f-4db2-b5f1-1a6666310d2a" />
+![Word cloud of the demo corpus](docs/wordcloud_lee_demo.png)
 
-## Setup and Installation
+## Demo results
 
-Follow these steps to set up and run the project on your local machine:
+Run on the *Lee* news corpus (300 short Australian news articles, English) that ships with gensim:
 
-1.  **Clone the repository (if it's public):**
-    ```bash
-    git clone [repository_url]
-    cd [repository_name]
-    ```
+| Corpus statistic | Value |
+|---|---|
+| Documents | 300 |
+| Tokens (after lemmatization and filtering) | 29,388 |
+| Vocabulary | 5,268 |
+| Median tokens per document | 81 |
+| Mean sentiment polarity / subjectivity (TextBlob) | 0.061 / 0.373 |
 
-2.  **Create and activate a virtual environment (recommended):**
-    ```bash
-    python -m venv venv        # For macOS/Linux
-    source venv/bin/activate   # For macOS/Linux
+Topic count was chosen by c_v coherence over k = 3…8 (best: **k = 3, c_v = 0.46**; k = 8 gives 0.43):
 
-    python -m venv venv        # For Windows
-    .\venv\Scripts\activate.bat # For Windows
-    ```
-    or using conda:
-    ```bash
-    conda create -n myenv python=3.x  # Replace 3.x with your Python version
-    conda activate myenv
-    ```
+| Topic | Top words | Reading |
+|---|---|---|
+| 1 | palestinian israeli arafat attack official israel leader people | Israeli–Palestinian conflict |
+| 2 | australia australian south government day fire people company | Australian domestic news (bushfires, economy) |
+| 3 | afghanistan force day people bin laden government united | Afghanistan war |
 
-3.  **Install the required dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    or if using conda:
-    ```bash
-    conda install --file requirements.txt
-    ```
+Coherence differences between k values are small, so treat the topic count as indicative, not definitive.
 
-4.  **Download the spaCy English language model:**
-    ```bash
-    python -m spacy download en_core_web_sm
-    ```
+## Features
+
+- **Two sources:** a folder of `.txt` files, or web scraping with `robots.txt` checks, a delay between requests and a custom User-Agent.
+- **Preprocessing:** URL removal, spaCy lemmatization, part-of-speech filter (nouns, proper nouns, verbs, adjectives, adverbs), custom stopwords, minimum document length.
+- **Analysis:** top words, type/token ratio, sentiment, named entities, LDA with automatic topic-count selection.
+- **Outputs** (`outputs/`): `report.json`, `top_words.csv`, `topics.csv`, `wordcloud.png`, and optionally `corpus.jsonl`.
+- **Tests:** `pytest` suite for extraction, preprocessing and analysis.
+
+## Quick start
+
+```bash
+git clone https://github.com/Nicolakorff/CorpusCreation.git
+cd CorpusCreation
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+
+python scripts/prepare_lee_corpus.py                 # demo corpus -> data/lee_demo/
+python main.py --config config.example.json
+pytest
+```
 
 ## Configuration
 
-The project's behavior is controlled by the `config.json` file located in the `data/` directory. You can modify parameters such as the target website URL, the number of articles to extract, CSS selectors for titles and content, stopwords to exclude, and the appearance of the generated word cloud.
+`config.example.json` overrides the defaults in `corpus_tool/config.py`.
 
 ```json
 {
-  "extraccion": {
-    "url_principal": "[https://www.scientificamerican.com/](https://www.scientificamerican.com/)",
-    "limite_articulos": 6,
-    "selector_titulo_articulo": "h2",
-    "selector_contenido_articulo": ".article-body"
-  },
-  "preprocesamiento": {
-    "stopwords_excluir": ["example", "another", "scientific", "american"],
-    "cargar_stopwords_desde_archivo": false,
-    "ruta_archivo_stopwords": "data/stopwords_personalizadas.txt"
-  },
-  "analisis": {
-    "nube_palabras": {
-      "num_palabras": 20,
-      "background_color": "black",
-      "colormap": "autumn",
-      "forma_circular": true
-    },
-    "top_n_palabras": {
-      "n": 20
-    },
-    "modelado_temas": {
-      "num_temas": 5,
-      "num_palabras_por_tema": 10
-    }
-  },
-  "rutas": {
-    "archivo_corpus": "data/corpus.json"
-  }
+  "source": {"type": "dir", "path": "data/lee_demo"},
+  "preprocessing": {"extra_stopwords": ["say", "tell", "year", "new"], "min_doc_tokens": 30},
+  "analysis": {"topics": {"min": 3, "max": 8}},
+  "output_dir": "outputs"
 }
 ```
 
+To scrape instead, set `"source": {"type": "web", "url": "https://…", "article_link_selector": "…", "title_selector": "h1", "content_selector": "article p", "max_articles": 50}`. CSS selectors are site-specific. Only scrape sites whose terms allow it, and prefer openly licensed sources: the repository does **not** store scraped article text (`save_corpus_text` is off by default).
 
-## Usage
+## Repository structure
 
-To run the main script, execute the main.ipynb notebook (or main.py script) in your activated environment. This script will:
-
-Extract news articles from the specified URL.
-Preprocess the text content (cleaning, tokenization, stopword removal, lemmatization).
-Analyze the frequency of words in the extracted articles.
-Generate and display a word cloud of the most frequent words.
-Perform sentiment analysis and topic modeling.
-
-## Running the Notebook:
 ```
-jupyter notebook main.ipynb
-```
-
-## Runnin the main_script.py:
-```
-python main._script.py
+├── main.py                  # command-line entry point
+├── config.example.json
+├── corpus_tool/
+│   ├── config.py            # defaults + JSON override
+│   ├── extractor.py         # local files / polite scraping
+│   ├── preprocessor.py      # cleaning, lemmatization, stopwords
+│   └── analyzer.py          # statistics, sentiment, entities, LDA, word cloud
+├── scripts/prepare_lee_corpus.py
+├── tests/
+├── notebooks/               # original exploratory notebooks (earlier version)
+└── docs/                    # demo word cloud and topics
 ```
 
-## Exploring the Code
+## Limitations
 
-The project is organized into several modules within the src/ directory:
+- **English only** (spaCy `en_core_web_sm`, TextBlob). Other languages need another spaCy model and a different sentiment method.
+- TextBlob is lexicon-based and crude; it is a baseline, not a validated sentiment model.
+- LDA is sensitive to preprocessing and random seed (fixed here at 42); coherence is a heuristic, not ground truth.
+- Scraping selectors break when a site changes its HTML.
+- No manual annotation or evaluation against labelled data.
 
-**- extractor.py:** Contains functions for web scraping, including downloading page content and extracting article links, titles, and content.
-**- preprocessor.py:** Includes functions for cleaning and processing text data, such as removing special characters, handling stopwords, and lemmatization using spaCy.
-**- analyzer.py:** Houses functions for performing text analysis, such as calculating word frequencies, generating word clouds, and (optionally) other analyses like sentiment analysis or topic modeling.
-**-utils.py:** Provides utility functions for tasks like loading configuration from JSON, saving the corpus, and printing formatted output.
+## Next steps
 
-## Contributing
-
-Contributions to this project are welcome. If you have ideas for improving the application or have found a bug, please feel free to open an issue or submit a pull request.
+- Multilingual support (German, Spanish, Catalan spaCy models) and language detection.
+- Compare LDA with embedding-based topic models (e.g. BERTopic).
+- Evaluate sentiment against a labelled dataset.
 
 ## Author
 
-Nicola Korff [My Github](https://github.com/Nicolakorff/)
-
-## License
-
-MIT License
+**Nicola Korff** · [LinkedIn](https://www.linkedin.com/in/nicola-korff/) · [GitHub](https://github.com/Nicolakorff)
